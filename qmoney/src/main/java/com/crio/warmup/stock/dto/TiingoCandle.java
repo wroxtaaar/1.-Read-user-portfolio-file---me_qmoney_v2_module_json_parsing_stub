@@ -1,4 +1,3 @@
-
 package com.crio.warmup.stock.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -61,11 +60,11 @@ public class TiingoCandle implements Candle {
   @Override
   public String toString() {
     return "TiingoCandle{"
-            + "open=" + open
-            + ", close=" + close
-            + ", high=" + high
-            + ", low=" + low
-            + ", date=" + date
-            + '}';
+        + "open=" + open
+        + ", close=" + close
+        + ", high=" + high
+        + ", low=" + low
+        + ", date=" + date
+        + '}';
   }
 }

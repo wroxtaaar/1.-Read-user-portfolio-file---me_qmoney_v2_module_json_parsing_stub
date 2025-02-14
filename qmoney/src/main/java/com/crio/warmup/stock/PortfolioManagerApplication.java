@@ -71,7 +71,7 @@ public class PortfolioManagerApplication {
       String URI = prepareUrl(t, LocalDate.parse(endDate), "2f8596fb079a6a31332d218111e473546fa385c0");
       TiingoCandle[] tingocandles = restTemplate.getForObject(URI, TiingoCandle[].class);
       TiingoCandle closeStock = tingocandles[tingocandles.length - 1];
-      totalReturnsDto.add(new TotalReturnsDto(t.getSymbol(), closeStock));
+      totalReturnsDto.add(new TotalReturnsDto(t.getSymbol(), closeStock.getClose()));
     }
 
   
