@@ -46,7 +46,59 @@ public class PortfolioManagerApplication {
   // build pass.
   // 2. You can use "./gradlew build" to check if your code builds successfully.
 
+  // TODO: CRIO_TASK_MODULE_REST_API
+  // Find out the closing price of each stock on the end_date and return the list
+  // of all symbols in ascending order by its close value on end date.
 
+  // Note:
+  // 1. You may have to register on Tiingo to get the api_token.
+  // 2. Look at args parameter and the module instructions carefully.
+  // 2. You can copy relevant code from #mainReadFile to parse the Json.
+  // 3. Use RestTemplate#getForObject in order to call the API,
+  // and deserialize the results in List<Candle>
+
+  static RestTemplate restTemplate = new RestTemplate();
+
+  public static List<String> mainReadQuotes(String[] args) throws IOException, URISyntaxException {
+    ObjectMapper om = getObjectMapper();
+    File file = resolveFileFromResources(args[0]);
+    String endDate = args[1];
+    PortfolioTrade[] trade = om.readValue(file, PortfolioTrade[].class);
+
+    List<Candle> candles = new ArrayList<>();
+    List<TotalReturnsDto> totalReturnsDto = new ArrayList<>();
+
+    for (PortfolioTrade t : trade) {
+      String URI = prepareUrl(t, LocalDate.parse(endDate), "2f8596fb079a6a31332d218111e473546fa385c0");
+      Candle[] candle = restTemplate.getForObject(URI, Candle[].class);
+      candles.add(candle[candle.length - 1]);
+    }
+
+    for (Candle c : candles) {
+      totalReturnsDto.add(new TotalReturnsDto(c.getSymbol(), c.getClose()));
+    }
+
+    return Collections.emptyList();
+  }
+
+  // TODO:
+  // After refactor, make sure that the tests pass by using these two commands
+  // ./gradlew test --tests PortfolioManagerApplicationTest.readTradesFromJson
+  // ./gradlew test --tests PortfolioManagerApplicationTest.mainReadFile
+  public static List<PortfolioTrade> readTradesFromJson(String filename) throws IOException, URISyntaxException {
+    return Collections.emptyList();
+  }
+
+  // TODO:
+  // Build the Url using given parameters and use this function in your code to
+  // cann the API.
+  public static String prepareUrl(PortfolioTrade trade, LocalDate endDate, String token) {
+    // return Collections.emptyList();
+    String url = "https://api.tiingo.com/tiingo/daily/" + trade.getSymbol() + "/prices?startDate="
+        + trade.getPurchaseDate() + "&endDate=" + endDate + "&token=" + token;
+    return url;
+
+  }
 
   public static List<String> mainReadFile(String[] args) throws IOException, URISyntaxException {
     ObjectMapper om = getObjectMapper();
@@ -144,6 +196,7 @@ public class PortfolioManagerApplication {
     ThreadContext.put("runId", UUID.randomUUID().toString());
 
     printJsonObject(mainReadFile(args));
+    printJsonObject(mainReadQuotes(args));
 
   }
 }
