@@ -65,18 +65,16 @@ public class PortfolioManagerApplication {
     String endDate = args[1];
     PortfolioTrade[] trade = om.readValue(file, PortfolioTrade[].class);
 
-    List<Candle> candles = new ArrayList<>();
     List<TotalReturnsDto> totalReturnsDto = new ArrayList<>();
 
     for (PortfolioTrade t : trade) {
       String URI = prepareUrl(t, LocalDate.parse(endDate), "2f8596fb079a6a31332d218111e473546fa385c0");
-      Candle[] candle = restTemplate.getForObject(URI, Candle[].class);
-      candles.add(candle[candle.length - 1]);
+      TiingoCandle[] tingocandles = restTemplate.getForObject(URI, TiingoCandle[].class);
+      TiingoCandle closeStock = tingocandles[tingocandles.length - 1];
+      totalReturnsDto.add(new TotalReturnsDto(t.getSymbol(), closeStock));
     }
 
-    for (Candle c : candles) {
-      totalReturnsDto.add(new TotalReturnsDto(c.getSymbol(), c.getClose()));
-    }
+  
 
     return Collections.emptyList();
   }
